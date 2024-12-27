@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CVE List</title>
+  <style>
+    /* Styles for the table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: center;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin: 20px;
+    }
+    th {
+      background-color: #f2f2f2;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin: 20px;
+    }
+    .pagination {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .pagination button, .pagination a, .apply-btn {
+      padding: 8px 16px;
+      margin: 0 5px;
+      border: none;
+      cursor: pointer;
+      border-radius: 10px;
+      text-decoration: none;
+      color: black;
+    }
+    .pagination button.prev, .pagination button.next, .apply-btn {
+      background-color: #ef7b22;
+      color: white;
+    }
+    .pagination button.prev:hover, .pagination button.next:hover, .apply-btn:hover {
+      background-color: #d7559e;
+    }
+    .pagination button.active-page {
+      background-color: blue;
+      color: white;
+      font-weight: bold;
+    }
+    .clickable {
+      cursor: pointer;
+      text-decoration: underline;
+      color: black;
+    }
+    .clickable:hover {
+      color: #d7559e;
+    }
+    .date-box {
+      padding: 4px 8px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <h2 style="color: #483889; text-align: center;">CVE LIST</h2>
+
+  <!-- CVE data table -->
+  <table>
+    <thead>
+      <tr>
+        <th>CVE ID</th>
+        <th>Published Date</th>
+        <th>Last Modified Date</th>
+        <th>Vulnerability Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <h3>Total Records: {{ total_records }}</h3>
+      {% for item in data %}
+      <tr>
+        <td class="clickable" onclick="window.location.href='/details/{{ item.cve.id }}';">{{ item.cve.id }}</td>
+        <td><div class="date-box">{{ item.cve.published.split('T')[0] }}</div></td>
+        <td><div class="date-box">{{ item.cve.lastModified.split('T')[0] }}</div></td>
+        <td>{{ item.cve.vulnStatus }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Pagination section -->
+  <div class="pagination" id="pagination"></div>
+
+  <!-- Form to change results per page -->
+  <form action="/" method="get" onsubmit="event.preventDefault(); changeResultsPerPage();">
+    <label for="resultsPerPage">Results Per Page:</label>
+    <select name="resultsPerPage" id="resultsPerPage">
+      <option value="10" {% if results_per_page == 10 %} selected {% endif %}>10</option>
+      <option value="50" {% if results_per_page == 50 %} selected {% endif %}>50</option>
+      <option value="100" {% if results_per_page == 100 %} selected {% endif %}>100</option>
+    </select>
+    <button class="apply-btn" type="submit">Apply</button>
+  </form>
+
+</div>
+
+<script>
+  // Pagination logic
+  var currentPage = {{ page_number }};
+  var totalRecords = {{ total_records }};
+  var perPage = {{ results_per_page }};
+  var totalPages = Math.ceil(totalRecords / perPage);
+
+  function prevPage() {
+    if (currentPage > 1) {
+      currentPage--;
+      updatePagination();
+      window.location.href = '/cves/list?page=' + currentPage + '&resultsPerPage=' + perPage + '&sort_order={{ sort_order }}';
+    }
+  }
+
+  function nextPage() {
+    if (currentPage < totalPages) {
+      currentPage++;
+      updatePagination();
+      window.location.href = '/cves/list?page=' + currentPage + '&resultsPerPage=' + perPage + '&sort_order={{ sort_order }}';
+    }
+  }
+
+  function goToPage(page) {
+    currentPage = page;
+    updatePagination();
+    window.location.href = '/cves/list?page=' + currentPage + '&resultsPerPage=' + perPage + '&sort_order={{ sort_order }}';
+  }
+
+  function changeResultsPerPage() {
+    var perPage = document.getElementById("resultsPerPage").value;
+    window.location.href = '/cves/list?page=1&resultsPerPage=' + perPage + '&sort_order={{ sort_order }}';
+  }
+
+  function updatePagination() {
+    var pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
+    var startPage = Math.max(currentPage - 3, 1);
+    var endPage = Math.min(startPage + 6, totalPages);
+
+    // Previous button
+    var prevButton = document.createElement('button');
+    prevButton.textContent = 'Previous';
+    prevButton.onclick = prevPage;
+    pagination.appendChild(prevButton);
+
+    // Page buttons
+    for (var i = startPage; i <= endPage; i++) {
+      var pageButton = document.createElement('button');
+      pageButton.textContent = i;
+      pageButton.onclick = goToPage.bind(null, i);
+      if (i === currentPage) {
+        pageButton.classList.add('active-page'); // Highlight current page
+      }
+      pagination.appendChild(pageButton);
+    }
+
+    // Next button
+    var nextButton = document.createElement('button');
+    nextButton.textContent = 'Next';
+    nextButton.onclick = nextPage;
+    pagination.appendChild(nextButton);
+  }
+
+  updatePagination();
+</script>
+
+</body>
+</html>

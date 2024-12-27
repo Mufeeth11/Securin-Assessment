@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CVE Detail</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #483889;
+            text-align: center;
+            margin-top: 0;
+        }
+        h2 {
+            color: #483889;
+            margin-top: 20px;
+        }
+        h3 {
+            color: #333;
+            margin-top: 10px;
+        }
+        p {
+            color: #666;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .name {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .name h3 {
+            color: #333;
+            margin: 0;
+        }
+        .name span {
+            font-weight: bold;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{{ cve_details['cve']['id'] }}</h1>
+        <h2>Descriptions</h2>
+        <p>{{ cve_details['cve']['descriptions'][0]['value'] }}</p>
+        <h2>CVSS V2 Metrics</h2>
+        <div class="name">
+            <h3>Security: <span>{{ cve_details['cve']['metrics']['cvssMetricV2'][0]['baseSeverity'] }}</span></h3>
+            <h3>Score: <span>{{ cve_details['cve']['metrics']['cvssMetricV2'][0]['impactScore'] }}</span></h3>
+        </div>
+        <h3>Vector String: <span>{{ cve_details['cve']['metrics']['cvssMetricV2'][0]['cvssData']['vectorString'] }}</span></h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Access Vector</th>
+                    <th>Access Complexity</th>
+                    <th>Authentication</th>
+                    <th>Confidentiality Impact</th>
+                    <th>Integrity Impact</th>
+                    <th>Availability Impact</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ cve_details['cve']['metrics']['cvssMetricV2'][0]['cvssData']['accessVector'] }}</td>
+                    <td>{{ cve_details['cve']['metrics']['cvssMetricV2'][0]['cvssData']['accessComplexity'] }}</td>
+                    <td>{{ cve_details['cve']['metrics']['cvssMetricV2'][0]['cvssData']['authentication'] }}</td>
+                    <td>{{ cve_details['cve']['metrics']['cvssMetricV2'][0]['cvssData']['confidentialityImpact'] }}</td>
+                    <td>{{ cve_details['cve']['metrics']['cvssMetricV2'][0]['cvssData']['integrityImpact'] }}</td>
+                    <td>{{ cve_details['cve']['metrics']['cvssMetricV2'][0]['cvssData']['availabilityImpact'] }}</td>
+                </tr>
+            </tbody>
+        </table>
+        <h2>Scores:</h2>
+        <h3>Exploitability Score: <span>{{ cve_details['cve']['metrics']['cvssMetricV2'][0]['exploitabilityScore'] }}</span></h3>
+        <h3>Impact Score: <span>{{ cve_details['cve']['metrics']['cvssMetricV2'][0]['impactScore'] }}</span></h3>
+
+        <h2>CPE:</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Criteria</th>
+                    <th>Match Criteria ID</th>
+                    <th>Vulnerable</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ cve_details['cve']['configurations'][0]['nodes'][0]['cpeMatch'][0]['criteria'] }}</td>
+                    <td>{{ cve_details['cve']['configurations'][0]['nodes'][0]['cpeMatch'][0]['matchCriteriaId'] }}</td>
+                    <td>{{ cve_details['cve']['configurations'][0]['nodes'][0]['cpeMatch'][0]['vulnerable'] }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
